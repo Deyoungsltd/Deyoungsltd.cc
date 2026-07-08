@@ -45,7 +45,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ message: "User created successfully" }, { status: 201 });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Something went wrong" },
+      { status: 500 }
+    );
   }
 }

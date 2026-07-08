@@ -9,6 +9,10 @@
   --color-rust-500: #c2531b;
   --color-cream-50: #f3ede1;
   --color-cream-100: #e9ddc7;
+  --color-onyx-950: #0a0b0f;
+  --color-ink: #f4f2ee;
+  --color-champagne-400: #d4af6a;
+  --font-family-display: Georgia, "Times New Roman", serif;
 }
 
 body {
@@ -25,6 +29,18 @@ html {
   }
   50% {
     transform: translate3d(0, -18px, 0) rotateX(12deg) rotateY(8deg);
+  }
+}
+
+@keyframes aurora {
+  0%, 100% {
+    transform: translate(-10%, -10%) scale(1);
+  }
+  33% {
+    transform: translate(10%, 5%) scale(1.05);
+  }
+  66% {
+    transform: translate(-5%, 10%) scale(0.95);
   }
 }
 

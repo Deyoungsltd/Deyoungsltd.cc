@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import "./globals.css";
 import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 import { AIChatButton } from "@/components/shared/AIChatButton";
