@@ -1,9 +1,8 @@
-﻿import {
+import {
   pgTable,
   pgEnum,
   uuid,
   text,
-  varchar,
   integer,
   numeric,
   boolean,

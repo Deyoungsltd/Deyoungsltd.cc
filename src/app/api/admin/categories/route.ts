@@ -1,32 +1,27 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/requireAdmin";
 import { db } from "@/db";
-import { products } from "@/db/schema";
-import { desc } from "drizzle-orm";
+import { categories } from "@/db/schema";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const all = await db.select().from(products).orderBy(desc(products.createdAt));
-  return NextResponse.json(all);
+  return NextResponse.json(await db.select().from(categories));
 }
 
 export async function POST(req: Request) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
-  const [created] = await db.insert(products).values({
+  const [created] = await db.insert(categories).values({
     slug: String(body.slug || body.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || Date.now()),
-    name: String(body.name || "Untitled product"),
+    name: String(body.name || "Untitled category"),
     description: body.description ? String(body.description) : null,
-    price: String(body.price || 0),
-    image: body.image ? String(body.image) : null,
-    categoryId: body.categoryId || null,
     business: body.business === "bole" ? "bole" : "electronics",
-    stock: Number(body.stock || 0),
-    featured: Boolean(body.featured),
+    image: body.image ? String(body.image) : null,
+    sortOrder: Number(body.sortOrder || 0),
     active: body.active !== false,
   }).returning();
   return NextResponse.json(created);

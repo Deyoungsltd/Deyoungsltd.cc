@@ -1,13 +1,11 @@
-﻿import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL || "postgres://postgres:postgres@localhost:5432/postgres";
 
-if (!connectionString) {
-  throw new Error(
-    "DATABASE_URL is not set. Create a .env file with DATABASE_URL pointing to your PostgreSQL instance."
-  );
+if (!process.env.DATABASE_URL && process.env.NODE_ENV !== "test") {
+  console.warn("DATABASE_URL is not set. Database-backed routes will fail until you set it in your environment.");
 }
 
 // Reuse the pool across hot reloads in development to avoid exhausting connections.

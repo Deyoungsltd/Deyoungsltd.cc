@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 @theme {
   --color-stone-950: #1c1917;
@@ -13,4 +13,25 @@
 
 body {
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotateX(8deg) rotateY(-10deg);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) rotateX(12deg) rotateY(8deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,8 +1,7 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/requireAdmin';
 import { db } from '@/db';
 import { settings } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 
 export async function GET() {
   const admin = await requireAdmin();
