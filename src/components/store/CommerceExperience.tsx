@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Bolt, ChefHat, Copy, PackageCheck, ShieldCheck, ShoppingCart, Sparkles, Wrench } from "lucide-react";
 import { ClickToCopy } from "@/components/shared/ClickToCopy";
 import { site, waLink } from "@/lib/site";
+import { ElectronicsLogo, BoleLogo } from "@/components/shared/Logo";
 
 type Business = "electronics" | "bole";
 
@@ -80,6 +82,7 @@ function PageMark({ business }: { business: Business }) {
 
 export function CommerceExperience({ business }: { business: Business }) {
   const copy = businessCopy(business);
+  const router = useRouter();
   const [productList, setProductList] = useState<Product[]>(copy.products);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -140,7 +143,7 @@ export function CommerceExperience({ business }: { business: Business }) {
       return;
     }
     setCart([]);
-    setOrderResult(`Order placed. Your tracking number is ${data.orderNumber}. Copy it now.`);
+    router.push(`/payment/${data.orderId}`);
   };
 
   const trackOrder = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -165,7 +168,9 @@ export function CommerceExperience({ business }: { business: Business }) {
     <main className={`min-h-screen bg-gradient-to-br ${copy.accent} text-white`}>
       <header className="sticky top-0 z-30 border-b border-white/10 bg-black/20 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
-          <PageMark business={business} />
+          <div className="flex items-center gap-3">
+            {business === "electronics" ? <ElectronicsLogo className="h-12" /> : <BoleLogo className="h-12" />}
+          </div>
           <nav className="hidden items-center gap-6 text-sm text-white/70 md:flex">
             <a href="#products" className="hover:text-white">Products</a>
             {business === "electronics" && <a href="#repairs" className="hover:text-white">Repairs</a>}

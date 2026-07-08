@@ -51,6 +51,16 @@ export const admins = pgTable("admins", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ----------------------------- Users -----------------------------
+export const users = pgTable("users", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ----------------------------- Categories -----------------------------
 export const categories = pgTable(
   "categories",
@@ -110,6 +120,7 @@ export const orders = pgTable(
       .notNull(),
     total: numeric("total", { precision: 10, scale: 2 }).notNull(),
     status: orderStatusEnum("status").default("pending").notNull(),
+    paymentProof: text("payment_proof"),
     notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
