@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import HeroSceneLazy from "@/components/three/HeroSceneLazy";
 import { ClickToCopy } from "@/components/shared/ClickToCopy";
@@ -6,7 +6,12 @@ import { AboutSection } from "@/components/shared/AboutSection";
 import { Testimonials } from "@/components/shared/Testimonials";
 import { Footer } from "@/components/shared/Footer";
 import { GroupLogo } from "@/components/shared/Logo";
+import { AIChatButton } from "@/components/shared/AIChatButton";
+import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 import { site } from "@/lib/site";
+import { db } from "@/db";
+import { testimonials } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 const businesses = [
   {
@@ -25,7 +30,18 @@ const businesses = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const dbTestimonials = await db.query.testimonials.findMany({
+    where: eq(testimonials.approved, true),
+    limit: 3,
+  });
+
+  const formattedTestimonials = dbTestimonials.map(t => ({
+    name: t.customerName,
+    quote: t.content,
+    business: t.business === "electronics" ? "Electronics" : "Bole",
+  }));
+
   return (
     <main className="min-h-screen bg-cream-50 text-stone-900">
       <header className="sticky top-0 z-20 border-b border-stone-900/10 bg-cream-50/90 backdrop-blur-sm">
@@ -84,8 +100,7 @@ export default function HomePage() {
                 <div className="relative">
                   <span className="text-xs uppercase tracking-[0.2em] opacity-70">{b.label}</span>
                   <h2 className="mt-4 font-display text-3xl font-bold">{b.name}</h2>
-                  <p className="mt-3 max-w-sm text-sm opacity-80">{b.
-blurb}</p>
+                  <p className="mt-3 max-w-sm text-sm opacity-80">{b.blurb}</p>
                   <span className="mt-6 inline-block text-sm opacity-90 transition-colors">
                     Explore &rarr;
                   </span>
@@ -97,8 +112,10 @@ blurb}</p>
       </section>
 
       <AboutSection />
-      <Testimonials />
+      <Testimonials testimonials={formattedTestimonials} />
       <Footer />
+      <WhatsAppButton />
+      <AIChatButton />
     </main>
   );
 }
