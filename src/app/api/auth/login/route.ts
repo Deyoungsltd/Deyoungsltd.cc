@@ -5,9 +5,16 @@ import bcrypt from "bcryptjs";
 import { signUserToken } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const limit = await checkRateLimit(ip, 5, 15); // 5 attempts every 15 mins
+    if (!limit.allowed) {
+      return NextResponse.json({ error: "Too many attempts. Please try again in 15 minutes." }, { status: 429 });
+    }
+
     const { email, password } = await req.json();
 
     if (!email || !password) {

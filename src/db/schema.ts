@@ -204,10 +204,12 @@ export const settings = pgTable("settings", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// ----------------------------- Relations -----------------------------
-export const categoriesRelations = relations(categories, ({ many }) => ({
-  products: many(products),
-}));
+// ----------------------------- Rate Limits -----------------------------
+export const rateLimits = pgTable("rate_limits", {
+  ip: text("ip").notNull().primaryKey(),
+  requests: integer("requests").default(0).notNull(),
+  lastRequest: timestamp("last_request").defaultNow().notNull(),
+});
 
 export const productsRelations = relations(products, ({ one }) => ({
   category: one(categories, {
