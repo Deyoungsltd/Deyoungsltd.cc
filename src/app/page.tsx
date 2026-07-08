@@ -28,12 +28,14 @@ const businesses = [
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-cream-50 text-stone-900">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <GroupLogo className="h-8 text-stone-900" />
-        <nav className="hidden gap-6 text-sm font-medium md:flex">
-          <Link href="/electronics" className="hover:text-navy-900">Electronics</Link>
-          <Link href="/bole" className="hover:text-rust-700">Bole</Link>
-        </nav>
+      <header className="sticky top-0 z-20 border-b border-stone-900/10 bg-cream-50/90 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <GroupLogo className="h-8 text-stone-900" />
+          <nav className="hidden gap-6 text-sm font-medium md:flex">
+            <Link href="/electronics" className="hover:text-navy-900">Electronics</Link>
+            <Link href="/bole" className="hover:text-rust-700">Bole</Link>
+          </nav>
+        </div>
       </header>
 
       <section className="relative overflow-hidden px-6 pt-12 pb-16 text-center">
@@ -77,13 +79,13 @@ export default function HomePage() {
         <div className="grid gap-6 md:grid-cols-2">
           {businesses.map((b, i) => (
             <Reveal key={b.href} delay={i * 0.1}>
-              <Link href={b.
-href} className="group relative block overflow-hidden rounded-2xl p-8 text-white transition-transform hover:scale-[1.02]">
+              <Link href={b.href} className="group relative block overflow-hidden rounded-2xl p-8 text-white transition-transform hover:scale-[1.02]">
                 <div className={`absolute inset-0 ${b.accent}`} />
                 <div className="relative">
                   <span className="text-xs uppercase tracking-[0.2em] opacity-70">{b.label}</span>
                   <h2 className="mt-4 font-display text-3xl font-bold">{b.name}</h2>
-                  <p className="mt-3 max-w-sm text-sm opacity-80">{b.blurb}</p>
+                  <p className="mt-3 max-w-sm text-sm opacity-80">{b.
+blurb}</p>
                   <span className="mt-6 inline-block text-sm opacity-90 transition-colors">
                     Explore &rarr;
                   </span>

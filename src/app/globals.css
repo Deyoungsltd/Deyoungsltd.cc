@@ -2,11 +2,13 @@
 
 @theme {
   --color-stone-950: #1c1917;
+  --color-stone-925: #14110d;
   --color-navy-900: #101828;
   --color-navy-700: #1e2a44;
   --color-rust-700: #9a3412;
   --color-rust-500: #c2531b;
-  --color-cream-50: #faf7f2;
+  --color-cream-50: #f3ede1;
+  --color-cream-100: #e9ddc7;
 }
 
 body {

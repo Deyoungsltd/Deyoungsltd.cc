@@ -4,12 +4,12 @@ import { GroupLogo } from "@/components/shared/Logo";
 
 export function Footer() {
   return (
-    <footer className="border-t border-stone-200 bg-stone-50 px-6 py-12 text-stone-600">
-      <div className="mx-auto max-w-6xl">
-        <GroupLogo className="h-7 text-stone-900" />
+    <footer className="border-t border-stone-800 bg-stone-950 px-6 py-12 text-stone-400">
+<div className="mx-auto max-w-6xl">
+        <GroupLogo className="h-7 text-white" />
         <div className="mt-6 grid gap-6 text-sm md:grid-cols-3">
           <div>
-            <p className="font-semibold text-stone-900">Contact</p>
+            <p className="font-semibold text-white">Contact</p>
             <div className="mt-2 space-y-1">
               <ClickToCopy label={site.phone} value={site.phone} />
               <br />
@@ -17,16 +17,16 @@ export function Footer() {
             </div>
           </div>
           <div>
-            <p className="font-semibold text-stone-900">Location</p>
+            <p className="font-semibold text-white">Location</p>
             <p className="mt-2">{site.location}</p>
           </div>
           <div>
-            <p className="font-semibold text-stone-900">Businesses</p>
+            <p className="font-semibold text-white">Businesses</p>
             <p className="mt-2">D&apos;Young Electrical &amp; Electronics</p>
             <p>D&apos;Young&apos;s Pot</p>
           </div>
         </div>
-        <p className="mt-8 text-xs text-stone-400">
+        <p className="mt-8 text-xs text-stone-500">
           &copy; {new Date().getFullYear()} D&apos;Young&apos;s Group. All rights reserved.
         </p>
       </div>
