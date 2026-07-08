@@ -1,20 +1,42 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
+
+const RESPONSES: Record<string, string> = {
+  "price": "Our prices vary by product. You can see the full updated price list on our Electronics and Bole pages!",
+  "how much": "Our prices vary by product. You can see the full updated price list on our Electronics and Bole pages!",
+  "location": "We are located in Port Harcourt, Rivers State. You can visit us for repairs or pick up your bole!",
+  "where": "We are located in Port Harcourt, Rivers State. You can visit us for repairs or pick up your bole!",
+  "bole": "Fresh, hot Nigerian bole is our specialty! Check out our combos here: /bole",
+  "repair": "We offer professional electrical and electronics repairs. You can request a repair via our Electronics page!",
+  "contact": "You can reach us via WhatsApp or phone. Check the homepage for our direct contact details!",
+};
 
 export function AIChatButton() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([
-    { role: "assistant", text: "Hi, I am the D Youngs Group assistant. How can I help?" },
+    { role: "assistant", text: "Hi, I am the D Youngs Group assistant. How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
 
   const send = () => {
     if (!input.trim()) return;
+    
+    const userText = input.toLowerCase();
     setMessages((m) => [...m, { role: "user", text: input }]);
     setInput("");
+
     setTimeout(() => {
-      setMessages((m) => [...m, { role: "assistant", text: "Thanks for reaching out, our team will follow up shortly." }]);
+      let response = "I'm not sure about that, but our team is available on WhatsApp for a quick answer!";
+      
+      for (const key in RESPONSES) {
+        if (userText.includes(key)) {
+          response = RESPONSES[key];
+          break;
+        }
+      }
+
+      setMessages((m) => [...m, { role: "assistant", text: response }]);
     }, 600);
   };
 

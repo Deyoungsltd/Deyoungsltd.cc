@@ -47,9 +47,11 @@ export default async function HomePage() {
       <header className="sticky top-0 z-20 border-b border-stone-900/10 bg-cream-50/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <GroupLogo className="h-8 text-stone-900" />
-          <nav className="hidden gap-6 text-sm font-medium md:flex">
+          <nav className="hidden gap-6 text-sm font-medium md:flex items-center">
             <Link href="/electronics" className="hover:text-navy-900">Electronics</Link>
             <Link href="/bole" className="hover:text-rust-700">Bole</Link>
+            <div className="ml-4 h-4 w-px bg-stone-300" />
+            <Link href="/login" className="hover:text-navy-900">Login</Link>
           </nav>
         </div>
       </header>
