@@ -1,9 +1,14 @@
 "use client";
+<<<<<<< HEAD
 import { waLink } from "@/lib/site";
+=======
+import { site, waLink } from "@/lib/site";
+>>>>>>> 4d712c424bc1965af0c6f23eb9c8a538c3a4e80e
 
 interface PaymentDetailsProps {
   amount: string;
   orderId: string;
+<<<<<<< HEAD
 }
 
 export function PaymentDetails({ amount, orderId }: PaymentDetailsProps) {
@@ -11,17 +16,34 @@ export function PaymentDetails({ amount, orderId }: PaymentDetailsProps) {
     <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm max-w-md mx-auto">
       <h3 className="text-lg font-display font-bold text-stone-900 mb-4">Payment Details</h3>
 
+=======
+  bankName?: string;
+  accountNumber?: string;
+  accountName?: string;
+}
+
+export function PaymentDetails({ amount, orderId, bankName, accountNumber, accountName }: PaymentDetailsProps) {
+  return (
+    <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm max-w-md mx-auto">
+      <h3 className="text-lg font-display font-bold text-stone-900 mb-4">Payment Details</h3>
+      
+>>>>>>> 4d712c424bc1965af0c6f23eb9c8a538c3a4e80e
       <div className="space-y-4 mb-6">
         <div className="flex justify-between items-center p-3 bg-stone-50 rounded-lg border border-stone-100">
           <span className="text-sm text-stone-500">Total Amount</span>
           <span className="text-lg font-bold text-stone-900">₦{amount}</span>
         </div>
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 4d712c424bc1965af0c6f23eb9c8a538c3a4e80e
         <div className="p-4 rounded-xl bg-navy-900 text-white">
           <p className="text-xs uppercase tracking-wider opacity-70 mb-2">Bank Transfer Details</p>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm opacity-80">Bank Name:</span>
+<<<<<<< HEAD
               <span className="text-sm font-semibold">Your Bank Name</span>
             </div>
             <div className="flex justify-between">
@@ -31,15 +53,34 @@ export function PaymentDetails({ amount, orderId }: PaymentDetailsProps) {
             <div className="flex justify-between">
               <span className="text-sm opacity-80">Account Name:</span>
               <span className="text-sm font-semibold">D&apos;Youngs Ltd</span>
+=======
+              <span className="text-sm font-semibold">{bankName || "OPay"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm opacity-80">Account Number:</span>
+              <span className="text-sm font-semibold">{accountNumber || "9159328832"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm opacity-80">Account Name:</span>
+              <span className="text-sm font-semibold">{accountName || "Wike-young Kennedy"}</span>
+>>>>>>> 4d712c424bc1965af0c6f23eb9c8a538c3a4e80e
             </div>
           </div>
         </div>
       </div>
+<<<<<<< HEAD
 
       <p className="text-xs text-stone-500 text-center mb-4">
         Once you&apos;ve made the transfer, please send a screenshot of the receipt via WhatsApp to confirm your order.
       </p>
 
+=======
+      
+      <p className="text-xs text-stone-500 text-center mb-4">
+        Once you&apos;ve made the transfer, please send a screenshot of the receipt via WhatsApp to confirm your order.
+      </p>
+      
+>>>>>>> 4d712c424bc1965af0c6f23eb9c8a538c3a4e80e
       <a
         href={`${waLink()}?text=Hi, I have made a payment of ₦${amount} for Order #${orderId}. Here is my screenshot.`}
         target="_blank"

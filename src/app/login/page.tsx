@@ -26,8 +26,13 @@ export default function LoginPage() {
       if (!res.ok) throw new Error(data.error || "Login failed");
       router.push("/");
       router.refresh();
+<<<<<<< HEAD
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");
+=======
+    } catch (err: any) {
+      setError(err.message);
+>>>>>>> 4d712c424bc1965af0c6f23eb9c8a538c3a4e80e
     } finally {
       setLoading(false);
     }

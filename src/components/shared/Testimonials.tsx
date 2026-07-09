@@ -13,6 +13,7 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
       <h2 className="mt-4 font-display text-3xl font-bold md:text-5xl">
         Trusted across Port Harcourt.
       </h2>
+<<<<<<< HEAD
       <div className="mt-12 grid gap-6 md:grid-cols-3">
         {testimonials.map((t, i) => (
           <div
@@ -22,6 +23,14 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
             <p className="text-white/80">&ldquo;{t.quote}&rdquo;</p>
             <p className="mt-6 text-sm font-bold text-white">{t.name}</p>
             <p className="text-xs text-white/50">{t.business}</p>
+=======
+      <div className="mt-10 grid gap-6 md:grid-cols-3">
+        {testimonials.map((t, i) => (
+          <div key={i} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+            <p className="text-stone-700">&ldquo;{t.quote}&rdquo;</p>
+            <p className="mt-4 text-sm font-semibold text-stone-900">{t.name}</p>
+            <p className="text-xs text-stone-500">{t.business}</p>
+>>>>>>> 4d712c424bc1965af0c6f23eb9c8a538c3a4e80e
           </div>
         ))}
       </div>

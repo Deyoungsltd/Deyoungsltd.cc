@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Environment, ContactShadows, Image } from "@react-three/drei";
 import { useRef, useMemo } from "react";
@@ -6,7 +6,6 @@ import type { Mesh, Group } from "three";
 
 interface HeroSceneProps {
   business?: "electronics" | "bole";
-  items?: string[];
 }
 
 function OrbitingItem({ url, position, speed, offset }: { url: string; position: [number, number, number]; speed: number; offset: number }) {
@@ -17,19 +16,20 @@ function OrbitingItem({ url, position, speed, offset }: { url: string; position:
       const t = state.clock.getElapsedTime() * speed + offset;
       ref.current.position.x = Math.cos(t) * position[0];
       ref.current.position.z = Math.sin(t) * position[0];
-      ref.current.rotation.y = -t;
+      ref.current.rotation.y = -t; // Face the center
     }
   });
 
   return (
     <group ref={ref}>
       <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-        <Image
-          url={url}
-          scale={[1.5, 1.5]}
-          transparent
-          opacity={0.95}
-          radius={0.75}
+        <Image 
+          url={url} 
+          scale={[1.2, 1.2]} 
+          transparent 
+          opacity={0.9}
+          // Slightly tilt for dynamic feel
+          rotation={[0, 0, 0]}
         />
       </Float>
     </group>
@@ -38,7 +38,7 @@ function OrbitingItem({ url, position, speed, offset }: { url: string; position:
 
 function BrandObject({ business }: { business?: "electronics" | "bole" }) {
   const ref = useRef<Mesh>(null);
-
+  
   useFrame((_, delta) => {
     if (ref.current) {
       ref.current.rotation.y += delta * 0.2;
@@ -63,31 +63,21 @@ function BrandObject({ business }: { business?: "electronics" | "bole" }) {
   );
 }
 
-export default function HeroScene({ business = "electronics", items: liveItems }: HeroSceneProps) {
+export default function HeroScene({ business = "electronics" }: HeroSceneProps) {
   const items = useMemo(() => {
-    if (liveItems && liveItems.length > 0) {
-      const speed = business === "bole" ? 0.4 : 0.3;
-      const count = Math.min(liveItems.length, 4);
-      return Array.from({ length: count }, (_, i) => ({
-        url: liveItems[i % liveItems.length],
-        pos: [2.8, 0, 0] as [number, number, number],
-        speed,
-        offset: (Math.PI * 2 * i) / count,
-      }));
-    }
     if (business === "bole") {
       return [
-        { url: "/products/bole_main.png", pos: [2.8, 0, 0] as [number, number, number], speed: 0.4, offset: 0 },
-        { url: "/products/bole_side.png", pos: [2.8, 0, 0] as [number, number, number], speed: 0.4, offset: Math.PI * 0.66 },
-        { url: "/products/bole_main.png", pos: [2.8, 0, 0] as [number, number, number], speed: 0.4, offset: Math.PI * 1.33 },
+        { url: "https://picsum.photos/seed/bole1/400/400", pos: [2.5, 0, 0] as [number, number, number], speed: 0.4, offset: 0 },
+        { url: "https://picsum.photos/seed/bole2/400/400", pos: [2.5, 0, 0] as [number, number, number], speed: 0.4, offset: Math.PI * 0.66 },
+        { url: "https://picsum.photos/seed/bole3/400/400", pos: [2.5, 0, 0] as [number, number, number], speed: 0.4, offset: Math.PI * 1.33 },
       ];
     }
     return [
-      { url: "/products/fan.png", pos: [2.8, 0, 0] as [number, number, number], speed: 0.3, offset: 0 },
-      { url: "/products/stabilizer.png", pos: [2.8, 0, 0] as [number, number, number], speed: 0.3, offset: Math.PI * 0.66 },
-      { url: "/products/fan.png", pos: [2.8, 0, 0] as [number, number, number], speed: 0.3, offset: Math.PI * 1.33 },
+      { url: "https://picsum.photos/seed/elec1/400/400", pos: [2.5, 0, 0] as [number, number, number], speed: 0.3, offset: 0 },
+      { url: "https://picsum.photos/seed/elec2/400/400", pos: [2.5, 0, 0] as [number, number, number], speed: 0.3, offset: Math.PI * 0.66 },
+      { url: "https://picsum.photos/seed/elec3/400/400", pos: [2.5, 0, 0] as [number, number, number], speed: 0.3, offset: Math.PI * 1.33 },
     ];
-  }, [business, liveItems]);
+  }, [business]);
 
   return (
     <Canvas
@@ -100,16 +90,16 @@ export default function HeroScene({ business = "electronics", items: liveItems }
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 4, 3]} intensity={1.8} castShadow />
       <pointLight position={[-3, -1, -2]} intensity={0.8} color={business === "bole" ? "#ffcc00" : "#00ccff"} />
-
+      
       <BrandObject business={business} />
-
+      
       {items.map((item, i) => (
-        <OrbitingItem
-          key={i}
-          url={item.url}
-          position={item.pos}
-          speed={item.speed}
-          offset={item.offset}
+        <OrbitingItem 
+          key={i} 
+          url={item.url} 
+          position={item.pos} 
+          speed={item.speed} 
+          offset={item.offset} 
         />
       ))}
 

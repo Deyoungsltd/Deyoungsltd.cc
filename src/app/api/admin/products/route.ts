@@ -1,33 +1,41 @@
-import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/requireAdmin";
+﻿import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { products } from "@/db/schema";
-import { desc } from "drizzle-orm";
-
-export const dynamic = "force-dynamic";
-
-export async function GET() {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const all = await db.select().from(products).orderBy(desc(products.createdAt));
-  return NextResponse.json(all);
-}
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: Request) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const body = await req.json();
-  const [created] = await db.insert(products).values({
-    slug: String(body.slug || body.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || Date.now()),
-    name: String(body.name || "Untitled product"),
-    description: body.description ? String(body.description) : null,
-    price: String(body.price || 0),
-    image: body.image ? String(body.image) : null,
-    categoryId: body.categoryId || null,
-    business: body.business === "bole" ? "bole" : "electronics",
-    stock: Number(body.stock || 0),
-    featured: Boolean(body.featured),
-    active: body.active !== false,
-  }).returning();
-  return NextResponse.json(created);
+  try {
+    const body = await req.json();
+    const { id, name, price, description, imageUrl, categoryId } = body;
+
+    if (id) {
+      await db.update(products)
+        .set({ 
+          name, 
+          price: String(price), 
+          description, 
+          imageUrl, 
+          categoryId, 
+          updatedAt: new Date() 
+        })
+        .where(eq(products.id, Number(id)));
+    } else {
+      await db.insert(products).values({ 
+        name, 
+        price: String(price), 
+        description, 
+        imageUrl, 
+        categoryId 
+      });
+    }
+
+    // Clear backend caches instantly so updates show live across the platform
+    revalidatePath("/");
+    revalidatePath("/products");
+    
+    return NextResponse.json({ success: true, message: "Records updated successfully" });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
 }
