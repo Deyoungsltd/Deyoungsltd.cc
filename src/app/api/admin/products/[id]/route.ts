@@ -24,18 +24,30 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
   const body = await req.json();
-  const update: ProductUpdate = {
-    slug: body.slug,
-    name: body.name,
-    description: body.description || null,
-    price: String(body.price || 0),
-    image: body.image || null,
-    categoryId: body.categoryId || null,
-    business: body.business === "bole" ? "bole" : "electronics",
-    stock: Number(body.stock || 0),
-    featured: Boolean(body.featured),
-    active: body.active !== false,
-  };
+  
+  const update: ProductUpdate = {};
+  if ("slug" in body) update.slug = String(body.slug);
+  if ("name" in body) update.name = String(body.name);
+  if ("description" in body) update.description = body.description ? String(body.description) : null;
+  if ("price" in body) update.price = String(body.price);
+  if ("image" in body) {
+    const img = body.image;
+    if (typeof img === "string" && img.length > 0) {
+      update.image = img;
+    } else if (!img) {
+      update.image = null;
+    }
+  }
+  if ("categoryId" in body) update.categoryId = body.categoryId || null;
+  if ("business" in body) update.business = body.business === "bole" ? "bole" : "electronics";
+  if ("stock" in body) update.stock = Number(body.stock);
+  if ("featured" in body) update.featured = Boolean(body.featured);
+  if ("active" in body) update.active = body.active !== false;
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ error: "No fields provided for update" }, { status: 400 });
+  }
+
   const [updated] = await db.update(products).set(update).where(eq(products.id, id)).returning();
   return NextResponse.json(updated);
 }

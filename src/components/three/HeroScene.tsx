@@ -1,70 +1,167 @@
-﻿"use client";
+"use client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Environment, ContactShadows } from "@react-three/drei";
+import { Float, Environment, ContactShadows, Image, MeshReflectorMaterial } from "@react-three/drei";
 import { useRef, useMemo } from "react";
-import type { Mesh } from "three";
+import type { Mesh, Group } from "three";
+import * as THREE from "three";
 
-function BrandObject() {
-  const ref = useRef<Mesh>(null);
-  const reducedMotion = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
+interface HeroSceneProps {
+  business?: "electronics" | "bole" | "combined";
+}
 
-  useFrame((_, delta) => {
-    if (ref.current && !reducedMotion) {
-      ref.current.rotation.y += delta * 0.12;
-      ref.current.rotation.x = Math.sin(Date.now() * 0.0002) * 0.08;
+function OrbitingItem({ url, position, speed, offset, color }: { url: string; position: [number, number, number]; speed: number; offset: number; color: string }) {
+  const ref = useRef<Group>(null);
+
+  useFrame((state) => {
+    if (ref.current) {
+      const t = state.clock.getElapsedTime() * speed + offset;
+      // Create a more organic, slightly tilted orbital path
+      ref.current.position.x = Math.cos(t) * position[0];
+      ref.current.position.y = Math.sin(t * 0.5) * 0.5; // Subtle vertical oscillation
+      ref.current.position.z = Math.sin(t) * position[0];
+      
+      // Make the item always face the center slightly, but with a slow rotation
+      ref.current.rotation.y = -t + Math.PI / 2; 
     }
   });
 
   return (
-    <Float
-      speed={reducedMotion ? 0 : 1}
-      rotationIntensity={reducedMotion ? 0 : 0.15}
-      floatIntensity={reducedMotion ? 0 : 0.4}
-    >
+    <group ref={ref}>
+      <Float speed={3} rotationIntensity={0.2} floatIntensity={0.5}>
+        {/* The "Premium Card" Container */}
+        <mesh>
+          <planeGeometry args={[1.6, 2.1]} />
+          <meshPhysicalMaterial 
+            color={color} 
+            metalness={0.1} 
+            roughness={0.1} 
+            transmission={0.9} 
+            thickness={0.5} 
+            transparent 
+            opacity={0.2} 
+          />
+        </mesh>
+        
+        {/* The Actual Product Image */}
+        <Image 
+          url={url} 
+          scale={[1.4, 1.9]} 
+          transparent 
+          opacity={1}
+          // Removed radius={0.75} to bring back the professional card look, 
+          // but we'll make the card feel premium with the background mesh above
+        />
+        
+        {/* Subtle glow border */}
+        <mesh scale={[1.65, 2.15, 1]}>
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial color={color} transparent opacity={0.1} side={THREE.BackSide} />
+        </mesh>
+      </Float>
+    </group>
+  );
+}
+
+function BrandObject({ business }: { business?: "electronics" | "bole" | "combined" }) {
+  const ref = useRef<Mesh>(null);
+  
+  useFrame((_, delta) => {
+    if (ref.current) {
+      ref.current.rotation.y += delta * 0.15;
+      ref.current.rotation.z += delta * 0.1;
+    }
+  });
+
+  // High-end colors
+  const color = business === "bole" ? "#9a3412" : business === "electronics" ? "#101828" : "#4a4a4a";
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
       <mesh ref={ref} castShadow receiveShadow>
-        <dodecahedronGeometry args={[1.3, 0]} />
+        {/* Using a TorusKnot for a more "complex/genius" look than a dodecahedron */}
+        <torusKnotGeometry args={[0.7, 0.2, 128, 32]} />
         <meshPhysicalMaterial
-          color="#1c2333"
-          metalness={0.85}
-          roughness={0.22}
-          clearcoat={0.6}
-          clearcoatRoughness={0.3}
-          reflectivity={0.5}
+          color={color}
+          metalness={1}
+          roughness={0.1}
+          clearcoat={1}
+          clearcoatRoughness={0}
+          emissive={color}
+          emissiveIntensity={0.2}
         />
       </mesh>
     </Float>
   );
 }
 
-export default function HeroScene() {
+export default function HeroScene({ business = "electronics" }: HeroSceneProps) {
+  const items = useMemo(() => {
+    const electronics = [
+      { url: "/products/fan.png", pos: [3, 0, 0] as [number, number, number], speed: 0.3, offset: 0, color: "#00ccff" },
+      { url: "/products/stabilizer.png", pos: [3, 0, 0] as [number, number, number], speed: 0.3, offset: Math.PI * 0.66, color: "#00ccff" },
+      { url: "/products/fan.png", pos: [3, 0, 0] as [number, number, number], speed: 0.3, offset: Math.PI * 1.33, color: "#00ccff" },
+    ];
+    const bole = [
+      { url: "/products/bole_main.png", pos: [3, 0, 0] as [number, number, number], speed: 0.4, offset: 0, color: "#ffaa00" },
+      { url: "/products/bole_side.png", pos: [3, 0, 0] as [number, number, number], speed: 0.4, offset: Math.PI * 0.66, color: "#ffaa00" },
+      { url: "/products/bole_main.png", pos: [3, 0, 0] as [number, number, number], speed: 0.4, offset: Math.PI * 1.33, color: "#ffaa00" },
+    ];
+
+    if (business === "bole") return bole;
+    if (business === "electronics") return electronics;
+    // Combined view for homepage
+    return [...electronics, ...bole].map((item, i) => ({
+      ...item,
+      pos: [3.5, 0, 0] as [number, number, number], // slightly wider orbit
+      offset: item.offset + (i > 2 ? Math.PI / 2 : 0), // stagger them
+    }));
+  }, [business]);
+
   return (
     <Canvas
-      camera={{ position: [0, 0.4, 5], fov: 38 }}
+      camera={{ position: [0, 0.5, 7], fov: 35 }}
       dpr={[1, 1.5]}
       shadows
       gl={{ antialias: true }}
     >
-      <color attach="background" args={["#0b0d12"]} />
-      <ambientLight intensity={0.35} />
-      <directionalLight
-        position={[3, 4, 3]}
-        intensity={1.4}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-      />
-      <pointLight position={[-3, -1, -2]} intensity={0.5} color="#d4af6a" />
-      <BrandObject />
-      <ContactShadows
-        position={[0, -1.4, 0]}
-        opacity={0.5}
-        scale={8}
-        blur={2.5}
-        far={2}
-      />
-      <Environment preset="studio" />
+      <color attach="background" args={["#050608"]} />
+      <ambientLight intensity={0.4} />
+      <directionalLight position={[5, 5, 5]} intensity={2} castShadow />
+      <pointLight position={[-5, -2, -5]} intensity={1} color={business === "bole" ? "#ffaa00" : "#00ccff"} />
+      
+      <BrandObject business={business} />
+      
+      {items.map((item, i) => (
+        <OrbitingItem 
+          key={i} 
+          url={item.url} 
+          position={item.pos} 
+          speed={item.speed} 
+          offset={item.offset} 
+          color={item.color}
+        />
+      ))}
+
+      <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={15} blur={3} far={2} />
+      
+      {/* Added a reflective floor for that "Premium Studio" look */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
+        <planeGeometry args={[50, 50]} />
+        <MeshReflectorMaterial
+          blur={[300, 100]}
+          resolution={1024}
+          mixBlur={1}
+          mixStrength={40}
+          roughness={1}
+          depthScale={1.2}
+          minDepthThreshold={0.4}
+          maxDepthThreshold={1.4}
+          color="#050608"
+          metalness={0.5}
+        />
+      </mesh>
+
+      <Environment preset="city" />
     </Canvas>
   );
 }

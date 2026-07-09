@@ -16,7 +16,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     name: body.name,
     description: body.description,
     business: body.business,
-    image: body.image,
+    image: body.imageUrl || body.image,
     sortOrder: Number(body.sortOrder || 0),
     active: body.active !== false,
   }).where(eq(categories.id, id)).returning();

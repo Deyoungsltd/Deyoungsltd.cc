@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import dynamic from "next/dynamic";
 
 const HeroScene = dynamic(() => import("./HeroScene"), {
@@ -6,6 +6,6 @@ const HeroScene = dynamic(() => import("./HeroScene"), {
   loading: () => <div className="h-full w-full animate-pulse bg-white/5" />,
 });
 
-export default function HeroSceneLazy() {
-  return <HeroScene />;
+export default function HeroSceneLazy({ business }: { business?: "electronics" | "bole" }) {
+  return <HeroScene business={business} />;
 }

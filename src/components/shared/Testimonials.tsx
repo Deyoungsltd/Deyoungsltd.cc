@@ -1,10 +1,10 @@
-﻿const items = [
-  { name: "Chinedu O.", quote: "Fast repair service, my fridge works perfectly now.", business: "Electronics" },
-  { name: "Amaka I.", quote: "Best bole in Port Harcourt, always fresh and hot.", business: "Bole" },
-  { name: "Tamuno B.", quote: "Genuine products and honest pricing, will always come back.", business: "Electronics" },
-];
+interface Testimonial {
+  name: string;
+  quote: string;
+  business: string;
+}
 
-export function Testimonials() {
+export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-20">
       <p className="text-xs uppercase tracking-[0.2em] text-stone-500">What people say</p>
@@ -12,7 +12,7 @@ export function Testimonials() {
         Trusted across Port Harcourt
       </h2>
       <div className="mt-10 grid gap-6 md:grid-cols-3">
-        {items.map((t, i) => (
+        {testimonials.map((t, i) => (
           <div key={i} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
             <p className="text-stone-700">&ldquo;{t.quote}&rdquo;</p>
             <p className="mt-4 text-sm font-semibold text-stone-900">{t.name}</p>
