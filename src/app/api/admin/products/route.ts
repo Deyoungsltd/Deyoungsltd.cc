@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     name: String(body.name || "Untitled product"),
     description: body.description ? String(body.description) : null,
     price: String(body.price || 0),
-    image: body.image ? String(body.image) : null,
+    image: body.imageUrl || body.image ? String(body.imageUrl || body.image) : null,
     categoryId: body.categoryId || null,
     business: body.business === "bole" ? "bole" : "electronics",
     stock: Number(body.stock || 0),

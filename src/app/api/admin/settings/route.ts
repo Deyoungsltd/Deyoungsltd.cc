@@ -22,3 +22,9 @@ export async function PATCH(req: Request) {
   }
   return NextResponse.json({ ok: true });
 }
+
+export async function PUT(req: Request) {
+  // a simpler endpoint for general public fetch if needed, 
+  // but we'll stick to the GET /api/settings for now.
+  return NextResponse.json({ error: "Use PATCH for updates" }, { status: 405 });
+}
