@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     name: String(body.name || "Untitled category"),
     description: body.description ? String(body.description) : null,
     business: body.business === "bole" ? "bole" : "electronics",
-    image: body.image ? String(body.image) : null,
+    image: body.imageUrl || body.image ? String(body.imageUrl || body.image) : null,
     sortOrder: Number(body.sortOrder || 0),
     active: body.active !== false,
   }).returning();

@@ -28,7 +28,7 @@ export async function GET(req: Request) {
       name: row.name,
       description: row.description || "Premium D'Young's product.",
       price: Number(row.price),
-      image: row.image || `https://picsum.photos/seed/${row.slug}/900/700`,
+      image: row.image || "/products/fan.png",
       category: row.category || (business === "bole" ? "Menu" : "Products"),
       badge: row.featured ? "Featured" : undefined,
     })));

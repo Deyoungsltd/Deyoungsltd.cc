@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import HeroSceneLazy from "@/components/three/HeroSceneLazy";
 import { ClickToCopy } from "@/components/shared/ClickToCopy";
@@ -6,9 +6,28 @@ import { AboutSection } from "@/components/shared/AboutSection";
 import { Testimonials } from "@/components/shared/Testimonials";
 import { Footer } from "@/components/shared/Footer";
 import { GroupLogo } from "@/components/shared/Logo";
-import { site } from "@/lib/site";
+import { AIChatButton } from "@/components/shared/AIChatButton";
+import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
+import { db } from "@/db";
+import { testimonials, settings } from "@/db/schema";
+import Link from "next/link";
+import { Reveal } from "@/components/ui/Reveal";
+import HeroSceneLazy from "@/components/three/HeroSceneLazy";
+import { ClickToCopy } from "@/components/shared/ClickToCopy";
+import { AboutSection } from "@/components/shared/AboutSection";
+import { Testimonials } from "@/components/shared/Testimonials";
+import { Footer } from "@/components/shared/Footer";
+import { GroupLogo } from "@/components/shared/Logo";
+import { AIChatButton } from "@/components/shared/AIChatButton";
+import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
+import { db } from "@/db";
+import { testimonials, settings } from "@/db/schema";
+import { eq } from "drizzle-orm";
+
+export const dynamic = "force-dynamic";
 
 const businesses = [
+
   {
     label: "Electronics & Repairs",
     name: "D'Young Electrical & Electronics",
@@ -25,15 +44,35 @@ const businesses = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch all dynamic settings from DB
+  const allSettings = await db.select().from(settings);
+  const siteSettings: Record<string, string> = {};
+  allSettings.forEach(s => {
+    siteSettings[s.key] = s.value || "";
+  });
+
+  const dbTestimonials = await db.query.testimonials.findMany({
+    where: eq(testimonials.approved, true),
+    limit: 3,
+  });
+
+  const formattedTestimonials = dbTestimonials.map(t => ({
+    name: t.customerName,
+    quote: t.content,
+    business: t.business === "electronics" ? "Electronics" : "Bole",
+  }));
+
   return (
     <main className="min-h-screen bg-cream-50 text-stone-900">
       <header className="sticky top-0 z-20 border-b border-stone-900/10 bg-cream-50/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <GroupLogo className="h-8 text-stone-900" />
-          <nav className="hidden gap-6 text-sm font-medium md:flex">
+          <nav className="hidden gap-6 text-sm font-medium md:flex items-center">
             <Link href="/electronics" className="hover:text-navy-900">Electronics</Link>
             <Link href="/bole" className="hover:text-rust-700">Bole</Link>
+            <div className="ml-4 h-4 w-px bg-stone-300" />
+            <Link href="/login" className="hover:text-navy-900">Login</Link>
           </nav>
         </div>
       </header>
@@ -63,15 +102,15 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={0.2}>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-stone-600">
-            <ClickToCopy label={site.phone} value={site.phone} />
-            <ClickToCopy label={site.email} value={site.email} />
+            <ClickToCopy label="Phone" value={siteSettings.contact_phone || "09069941929"} />
+            <ClickToCopy label="Email" value={siteSettings.contact_email || "deyoungsltd@gmail.com"} />
           </div>
         </Reveal>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-10">
         <Reveal delay={0.1} className="relative h-[22rem] w-full overflow-hidden rounded-2xl border border-stone-200 md:h-[28rem]">
-          <HeroSceneLazy />
+          <HeroSceneLazy business="combined" />
         </Reveal>
       </section>
 
@@ -84,8 +123,7 @@ export default function HomePage() {
                 <div className="relative">
                   <span className="text-xs uppercase tracking-[0.2em] opacity-70">{b.label}</span>
                   <h2 className="mt-4 font-display text-3xl font-bold">{b.name}</h2>
-                  <p className="mt-3 max-w-sm text-sm opacity-80">{b.
-blurb}</p>
+                  <p className="mt-3 max-w-sm text-sm opacity-80">{b.blurb}</p>
                   <span className="mt-6 inline-block text-sm opacity-90 transition-colors">
                     Explore &rarr;
                   </span>
@@ -97,8 +135,10 @@ blurb}</p>
       </section>
 
       <AboutSection />
-      <Testimonials />
+      <Testimonials testimonials={formattedTestimonials} />
       <Footer />
+      <WhatsAppButton />
+      <AIChatButton />
     </main>
   );
 }

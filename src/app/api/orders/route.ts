@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       quantity: item.quantity,
     })));
 
-    return NextResponse.json({ ok: true, orderNumber: created.orderNumber, status: created.status, total: created.total });
+    return NextResponse.json({ ok: true, orderId: created.id, orderNumber: created.orderNumber, status: created.status, total: created.total });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Order failed." }, { status: 500 });
   }

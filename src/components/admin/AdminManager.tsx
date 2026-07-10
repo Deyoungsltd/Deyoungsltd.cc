@@ -104,13 +104,73 @@ export function AdminManager({ mode, title, description }: { mode: Mode; title: 
     await load();
   }
 
+  async function handleAssetCommit(file: File) {
+    setBusy(true);
+    setMessage("Uploading to Cloudinary...");
+    try {
+      // 1. Validation: Ensure required fields are present before attempting to commit to DB
+      if (mode === "products") {
+        if (!draft.name || !draft.price) {
+          throw new Error("Please provide a product name and price before uploading.");
+        }
+      } else if (mode === "categories") {
+        if (!draft.name) {
+          throw new Error("Please provide a category name before uploading.");
+        }
+      }
+
+      // 2. Upload to Cloudinary
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ml_default");
+
+      const res = await fetch("https://api.cloudinary.com/v1_1/qkevvqno/image/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Cloudinary upload failed");
+      const uploadData = await res.json();
+      const secure_url = uploadData.secure_url;
+
+      // 3. Determine Endpoint and Method
+      if (mode !== "products" && mode !== "categories") {
+        setDraft((current) => ({ ...current, image: secure_url }));
+        setMessage("Image uploaded successfully.");
+        setBusy(false);
+        return;
+      }
+
+      const url = editing ? `${endpoints[mode]}/${editing}` : endpoints[mode];
+      const method = editing ? "PATCH" : "POST";
+
+      setMessage(`Committing to ${mode}...`);
+      const commitRes = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...draft, imageUrl: secure_url }),
+      });
+
+      if (!commitRes.ok) throw new Error(`${mode} commit failed`);
+
+      setMessage(`${mode === "products" ? "Product" : "Category"} saved successfully!`);
+      
+      if (!editing) {
+        setDraft(blankFor(mode));
+      } else {
+        setDraft((current) => ({ ...current, image: secure_url }));
+      }
+      
+      await load();
+    } catch (e: any) {
+      setMessage(e.message || "Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function uploadImage(file: File) {
-    const formData = new FormData();
-    formData.append("file", file);
-    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-    const data = await res.json().catch(() => ({}));
-    if (res.ok && data.url) setDraft((current) => ({ ...current, image: String(data.url) }));
-    else setMessage(data.error || "Upload failed.");
+    await handleAssetCommit(file);
   }
 
   function inputFor(field: string) {
@@ -133,6 +193,19 @@ export function AdminManager({ mode, title, description }: { mode: Mode; title: 
     }
     if (["active", "featured", "approved"].includes(field)) {
       return <label className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm"><input type="checkbox" checked={Boolean(value)} onChange={(e) => setDraft({ ...draft, [field]: e.target.checked })} /> {field}</label>;
+    }
+    if (field === "image") {
+      return (
+        <div className="flex flex-col gap-1">
+          <input 
+            readOnly 
+            value={pretty(value)} 
+            className={`${base} bg-stone-100 text-stone-400 cursor-not-allowed`} 
+            placeholder="Upload a file below..." 
+          />
+          <span className="text-[10px] text-stone-400 italic">Image must be uploaded via file picker</span>
+        </div>
+      );
     }
     return <input value={pretty(value) === "—" ? "" : pretty(value)} onChange={(e) => setDraft({ ...draft, [field]: e.target.value })} className={base} placeholder={field} />;
   }
