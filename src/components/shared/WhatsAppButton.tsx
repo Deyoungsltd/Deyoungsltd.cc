@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { site, waLink } from "@/lib/site";
 
 export function WhatsAppButton() {

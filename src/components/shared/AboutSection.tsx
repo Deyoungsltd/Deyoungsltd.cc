@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 export function AboutSection() {
   return (
     <div className="bg-cream-100">

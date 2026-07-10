@@ -6,7 +6,8 @@ export function middleware(request: NextRequest) {
 
   // 1. Define public routes that anyone can access
   const isPublicRoute = 
-    pathname === '/login' || 
+    pathname === '/login' ||
+    pathname === '/admin/login' || 
     pathname === '/signup' || 
     pathname.startsWith('/api/auth');
 
@@ -26,7 +27,7 @@ export function middleware(request: NextRequest) {
 
   // If no token is found, redirect the user to the login page
   if (!userToken && !adminToken) {
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = new URL('/admin/login', request.url);
     // Optional: add a redirect parameter to send them back after login
     loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);

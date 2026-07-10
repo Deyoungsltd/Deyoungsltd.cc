@@ -1,4 +1,4 @@
-﻿import { ClickToCopy } from "@/components/shared/ClickToCopy";
+import { ClickToCopy } from "@/components/shared/ClickToCopy";
 import { site } from "@/lib/site";
 import { GroupLogo } from "@/components/shared/Logo";
 
