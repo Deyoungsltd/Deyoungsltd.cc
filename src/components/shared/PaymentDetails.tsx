@@ -54,3 +54,4 @@ export function PaymentDetails({ amount, orderId, bankName, accountNumber, accou
     </div>
   );
 }
+
