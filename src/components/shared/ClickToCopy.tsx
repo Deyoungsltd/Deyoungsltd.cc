@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 
 export function ClickToCopy({ label, value }: { label: string; value: string }) {
